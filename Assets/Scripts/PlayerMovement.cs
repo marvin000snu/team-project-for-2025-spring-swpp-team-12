@@ -77,16 +77,16 @@ public class PlayerMovement : MonoBehaviour
                 transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
 
                 Vector3 rayDir = playerCamera.transform.position - transform.position;
-                float maxCameraDistance = 7f;
+                float maxCameraDistance = 30f;
                 if (Physics.Raycast(transform.position, rayDir, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("CameraCollision")))
                 {
                     Debug.Log("Hit: " + hit.collider.name);
-                    float distance = hit.distance - 0.5f;
+                    float distance = hit.distance;
                     Debug.Log("Distance: " + distance);
                     //distance = Mathf.Clamp(distance, 0.5f, maxCameraDistance);
                     if (distance < maxCameraDistance)
                     {
-                        playerCamera.transform.position = hit.point;
+                        playerCamera.transform.position = hit.point-rayDir.normalized*1.5f;
                     }
                 }
             }
