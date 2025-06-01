@@ -3,9 +3,12 @@ using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
-    public GameObject slotPrefab;         
-    public Transform slotParent;          
     public static InventoryUI Instance;
+
+    public GameObject slotPrefab;   // 프리팹 (슬롯용)
+    public Transform slotParent;    // 슬롯이 들어갈 부모 (ex: GridLayoutGroup)
+
+    private int maxSlots = 4;
 
     private void Awake()
     {
@@ -14,36 +17,45 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
-        UpdateUI(); 
+        UpdateUI();
     }
 
-    public void UpdateUI()
+public void UpdateUI()
+{
+    Debug.Log("[UI] UpdateUI called");
+
+    // 기존 슬롯 제거
+    foreach (Transform child in slotParent)
     {
-        // 기존 슬롯 제거
-        foreach (Transform child in slotParent)
+        Destroy(child.gameObject);
+    }
+
+    Debug.Log($"[UI] activeItems: {Inventory.Instance.activeItems.Count}, passiveItems: {Inventory.Instance.passiveItems.Count}");
+
+    for (int i = 0; i < maxSlots; i++)
+    {
+        GameObject slot = Instantiate(slotPrefab, slotParent);
+        Image itemImage = slot.transform.Find("ItemImage").GetComponent<Image>();
+
+        if (i < Inventory.Instance.activeItems.Count)
         {
-            Destroy(child.gameObject);
+            itemImage.sprite = Inventory.Instance.activeItems[i].thumbnail;
+            itemImage.color = new Color(1, 1, 1, 1);
+            Debug.Log($"[UI] Slot {i} - ActiveItem: {Inventory.Instance.activeItems[i].itemName}");
         }
-
-        int maxSlots = 4;
-
-        for (int i = 0; i < maxSlots; i++)
+        else if (i < Inventory.Instance.activeItems.Count + Inventory.Instance.passiveItems.Count)
         {
-            GameObject slot = Instantiate(slotPrefab, slotParent);
-
-            Transform itemImageTr = slot.transform.Find("ItemImage");
-            Image itemImage = itemImageTr.GetComponent<Image>();
-
-            if (i < Inventory.Instance.items.Count)
-            {
-                itemImage.sprite = Inventory.Instance.items[i].thumbnail;
-                itemImage.color = new Color(1, 1, 1, 1); // 보이게
-            }
-            else
-            {
-                itemImage.sprite = null;
-                itemImage.color = new Color(1, 1, 1, 0); // 완전 투명
-            }
+            int idx = i - Inventory.Instance.activeItems.Count;
+            itemImage.sprite = Inventory.Instance.passiveItems[idx].thumbnail;
+            itemImage.color = new Color(1, 1, 1, 1);
+            Debug.Log($"[UI] Slot {i} - PassiveItem: {Inventory.Instance.passiveItems[idx].itemName}");
+        }
+        else
+        {
+            itemImage.sprite = null;
+            itemImage.color = new Color(1, 1, 1, 0);
+            Debug.Log($"[UI] Slot {i} - Empty");
         }
     }
+}
 }
