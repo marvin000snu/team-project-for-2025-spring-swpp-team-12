@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ce4b40d42042378b4ab54bd033714, type: 3}
   m_Name: DummyPassiveItem
   m_EditorClassIdentifier: 
-  itemName: 
-  thumbnail: {fileID: 0}
-  prefab: {fileID: 0}
-  duration: 5
+  itemName: DummyPassiveItem
+  thumbnail: {fileID: 21300000, guid: 618fc55b7df014bd4b92968cfa159dd7, type: 3}
+  prefab: {fileID: 1122662041667552426, guid: 20216cdb5ae9e479eb4c5276e07a63f3, type: 3}
+  effectAsset: {fileID: 0}
+  duration: 50
