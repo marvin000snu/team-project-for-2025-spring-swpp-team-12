@@ -27,6 +27,8 @@
 
 # Visual Studio cache directory
 .vs/
+.vscode/
+.vsconfig
 
 # Gradle cache directory
 .gradle/
@@ -75,4 +77,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 Assets/TextMesh Pro
+
 UserSettings/
+
+# .DS_Store
+.DS_Store
