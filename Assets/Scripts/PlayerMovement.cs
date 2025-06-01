@@ -7,18 +7,18 @@ public class PlayerMovement : MonoBehaviour
 {
     public Camera playerCamera;
 
-    float crouchSpeed = 3f;
+    // float crouchSpeed = 3f;
     float walkSpeed = 15f;
     float runSpeed = 30f;
     float jumpPower = 20f;
     float gravity = 40f;
     float lookSpeed = 2f;
     float lookXLimit = 70f;
-    float defaultHeight = 4f;
-    float crouchHeight = 2f;
-    float shrinkSpeed = 5f;
-    bool isCrouching = false;
-    float wiggleSize = 0f;
+    // float defaultHeight = 4f;
+    // float crouchHeight = 2f;
+    // float shrinkSpeed = 5f;
+    // bool isCrouching = false;
+    // float wiggleSize = 0f;
 
     int runState = 0;   // 0 = Horizontal, 1 = Hor2Vert 2 = Vert
     float vX, vZ;
@@ -80,9 +80,9 @@ public class PlayerMovement : MonoBehaviour
                 float maxCameraDistance = 30f;
                 if (Physics.Raycast(transform.position, rayDir, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("CameraCollision")))
                 {
-                    Debug.Log("Hit: " + hit.collider.name);
+                    // Debug.Log("Hit: " + hit.collider.name);
                     float distance = hit.distance;
-                    Debug.Log("Distance: " + distance);
+                    // Debug.Log("Distance: " + distance);
                     //distance = Mathf.Clamp(distance, 0.5f, maxCameraDistance);
                     if (distance < maxCameraDistance)
                     {
