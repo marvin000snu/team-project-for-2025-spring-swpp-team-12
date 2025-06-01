@@ -19,6 +19,10 @@ public class Health : MonoBehaviour, IDamageable
     // public float fillSpeed = 2f;
     // private float targetFill = 1f;
 
+    //invincibility settings -> 여러번 충돌 방지
+    protected bool isInvincible = false;
+    [SerializeField] protected float invincibleDuration = 0f;
+
     void Awake()
     {
         currentHealth = maxHealth;
@@ -37,6 +41,8 @@ public class Health : MonoBehaviour, IDamageable
 
     public void ChangeHealth(int amount)
     {
+        if (isInvincible) return;
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         // targetFill = currentHealth / maxHealth;
@@ -46,6 +52,11 @@ public class Health : MonoBehaviour, IDamageable
         // StartCoroutine(ShakeHealthBar());
         if (currentHealth <= 0)
             Die();
+            
+        if (invincibleDuration > 0f && amount > 0)
+        {
+            StartCoroutine(InvincibleCoroutine());
+        }
     }
 
     // IEnumerator ShakeHealthBar()
@@ -58,6 +69,14 @@ public class Health : MonoBehaviour, IDamageable
     //     }
     //     transform.localPosition = originalPos;
     // }
+
+    protected IEnumerator InvincibleCoroutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibleDuration);
+        isInvincible = false;
+    }
+
     void Die()
     {
         // TODO : Death Handler
