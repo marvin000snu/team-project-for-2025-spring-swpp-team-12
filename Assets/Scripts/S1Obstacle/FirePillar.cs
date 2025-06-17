@@ -6,7 +6,7 @@ public class FirePillar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("🔥 Player entered the fire pillar!");
+            Debug.Log("Player entered the fire pillar");
         }
     }
 
@@ -14,7 +14,7 @@ public class FirePillar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("🔥 Player is inside the fire pillar!");
+            Debug.Log("Player is inside the fire pillar");
         }
     }
 
@@ -22,7 +22,7 @@ public class FirePillar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("🔥 Player left the fire pillar!");
+            Debug.Log("Player left the fire pillar");
         }
     }
 }
