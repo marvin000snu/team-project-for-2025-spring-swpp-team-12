@@ -39,10 +39,10 @@ public class Health : MonoBehaviour, IDamageable
     {
         // fillImage.fillAmount = Mathf.Lerp(fillImage.fillAmount, targetFill, Time.deltaTime * fillSpeed);
 
-        // if (Input.GetKeyDown(KeyCode.D))
-        // {
-        //     ChangeHealth(10);
-        // }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ChangeHealth(10);
+        }
     }
 
     public void ChangeHealth(int amount)
