@@ -55,10 +55,10 @@ public class PlayerMovement : MonoBehaviour
             Stamina s = gameObject.GetComponent<Stamina>();
             if (isRunningKeyPushed)
             {
-                if (s.IsStaminaEmpty() || vInput <= 0)
-                    isRunning = false;
-                else
+                if (s.IsStaminaAvailable() && vInput > 0)
                     isRunning = true;
+                else
+                    isRunning = false;
             }
             else
                 isRunning = false;

@@ -32,13 +32,13 @@ public class Stamina : MonoBehaviour
         Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
     }
 
-    public bool IsStaminaEmpty()
+    public bool IsStaminaAvailable()
     {
-        if (currentStamina == 0)
+        if (currentStamina == 0 || isStaminaLocked)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
     public void ChangeStamina(int amount)
     {
