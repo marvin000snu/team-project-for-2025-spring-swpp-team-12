@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public event Action OnGameClear;
 
     private bool isPaused = false;
+    private bool isBoost = false;
 
     private float playTime = 0.0f;
     private string playerName = "";
@@ -102,4 +103,21 @@ public class GameManager : MonoBehaviour
     
     public float GetPlayTime() => playTime;
     public string GetPlayerName() => playerName;
+
+    // Boost 관련 메서드
+    public void SetBoost(bool value)
+    {
+        isBoost = value;
+    }
+
+    public bool IsBoosted()
+    {
+        return isBoost;
+    }
+
+    public float GetSpeedMultiplier()
+    {
+        return isBoost ? 1.5f : 1f;
+    }
+
 }

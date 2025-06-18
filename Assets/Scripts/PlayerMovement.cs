@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     // float crouchSpeed = 3f;
     float walkSpeed = 15f;
+    bool isRunning = false;
     float runSpeed = 30f;
     float jumpPower = 20f;
     float gravity = 40f;
@@ -46,9 +47,31 @@ public class PlayerMovement : MonoBehaviour
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
 
-            bool isRunning = Input.GetKey(KeyCode.LeftShift);
-            float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-            float curSpeedZ = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+            float vInput = Input.GetAxis("Vertical");
+            float hInput = Input.GetAxis("Horizontal");
+
+            bool isRunningKeyPushed = Input.GetKey(KeyCode.LeftShift);
+
+            Stamina s = gameObject.GetComponent<Stamina>();
+            if (isRunningKeyPushed)
+            {
+                if (s.IsStaminaAvailable() && vInput > 0)
+                    isRunning = true;
+                else
+                    isRunning = false;
+            }
+            else
+                isRunning = false;
+
+
+            if (isRunning)
+                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000));
+            else
+                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 1000));
+
+
+            float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * vInput : 0;
+            float curSpeedZ = canMove ? (isRunning ? runSpeed : walkSpeed) * hInput : 0;
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward * curSpeedX) + (right * curSpeedZ);
 
