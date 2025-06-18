@@ -10,7 +10,7 @@ public class LeaderBoardUIManager : MonoBehaviour
     public Button nextButton;
     public Button prevButton;
     public TextMeshProUGUI pageText;
-    public GameObject getNamePanel;
+
 
     private List<PlayerEntry> entries;
     private int currentPage = 0;
@@ -19,23 +19,12 @@ public class LeaderBoardUIManager : MonoBehaviour
     public LeaderBoardManager leaderboardManager;
     private GetPlayerName getPlayerName;
 
-    private bool isFromGameClear = true;
-
     void Start()
     {
-        getPlayerName = getNamePanel.GetComponent<GetPlayerName>();
         leaderboardManager.LoadLeaderboard();
+        leaderboardManager.AddScore(GameManager.Instance.GetPlayerName(), GameManager.Instance.GetPlayTime());
         entries = leaderboardManager.GetLeaderboardEntries();
         ShowPage(0);
-
-        if (isFromGameClear)
-        {
-            getNamePanel.SetActive(true);
-        }
-        else
-        {
-            getNamePanel.SetActive(false);
-        }
     }
 
     void ShowPage(int page)
@@ -92,8 +81,6 @@ public class LeaderBoardUIManager : MonoBehaviour
         leaderboardManager.SaveLeaderboard();
         entries = leaderboardManager.GetLeaderboardEntries();
 
-        getNamePanel.SetActive(false);
-        isFromGameClear = false;
         currentPage = 0;
         ShowPage(currentPage);
     }

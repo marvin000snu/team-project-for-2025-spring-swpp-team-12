@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseController : MonoBehaviour
 {
@@ -18,5 +19,11 @@ public class PauseController : MonoBehaviour
         isPaused = false;
         pausePanel.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    public void RestartGame()
+    {
+        pausePanel.SetActive(false);
+        SceneManager.LoadScene("GameScene");
     }
 }

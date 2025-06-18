@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GetPlayerName : MonoBehaviour
 {
     public TMP_InputField nameInputField;
     public Button okButton;
-    public LeaderBoardUIManager leaderBoardUIManager;
 
     void Start()
     {
@@ -44,6 +44,12 @@ public class GetPlayerName : MonoBehaviour
     public string GetPlayerNameInput()
     {
         return nameInputField.text.Trim();
+    }
+
+    public void OnOkButtonClicked()
+    {
+        GameManager.Instance.SetPlayerName(nameInputField.text.Trim());
+        SceneManager.LoadScene("LeaderBoardScene");
     }
 
 }

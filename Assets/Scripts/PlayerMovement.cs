@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
                     //distance = Mathf.Clamp(distance, 0.5f, maxCameraDistance);
                     if (distance < maxCameraDistance)
                     {
-                        playerCamera.transform.position = hit.point-rayDir.normalized*1.5f;
+                        playerCamera.transform.position = hit.point - rayDir.normalized * 1.5f;
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
 
                 transform.rotation = Quaternion.LookRotation(targetDirection);
                 moveDirection = targetDirection.normalized * walkSpeed;
-                moveDirection.y = - vertSpeed;
+                moveDirection.y = -vertSpeed;
             }
 
             characterController.Move(moveDirection * Time.deltaTime);
@@ -155,5 +155,10 @@ public class PlayerMovement : MonoBehaviour
             vX = 0;
             vZ = 0;
         }
+    }
+
+    public void SetCanMove(bool allowMove)
+    {
+        canMove = allowMove;
     }
 }
