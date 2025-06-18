@@ -3,9 +3,23 @@ using System.Collections;
 
 public class TestGameClear : MonoBehaviour
 {
+    public PauseController pauseController;
+    private PlayerMovement playerMovement;
     void Start()
     {
+        playerMovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
         StartCoroutine(TriggerGameClearAfterDelay());
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            playerMovement.SetCanMove(false);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            pauseController.TogglePause();
+        }
     }
 
     IEnumerator TriggerGameClearAfterDelay()
