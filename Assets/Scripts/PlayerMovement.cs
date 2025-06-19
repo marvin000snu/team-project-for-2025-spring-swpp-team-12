@@ -14,9 +14,9 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
 
     // float crouchSpeed = 3f;
-    float walkSpeed = 100f;
+    float walkSpeed = 20f;
     bool isRunning = false;
-    float runSpeed = 200f;
+    float runSpeed = 50f;
     float jumpPower = 20f;
     float gravity = 40f;
     float lookSpeed = 2f;
@@ -48,6 +48,8 @@ public class PlayerMovement : MonoBehaviour
 
     HashSet<Vector3Int> validChunks;
 
+    // Animation
+    Animator animator;
 
     void Start()
     {
@@ -58,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         validChunks = MapLoader.ValidChunks;
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -187,6 +190,9 @@ public class PlayerMovement : MonoBehaviour
 
             characterController.Move(moveDirection * Time.deltaTime);
         }
+        // Debug.Log("Velocity: " + characterController.velocity.magnitude);
+        animator.SetFloat("f_speed", characterController.velocity.magnitude);
+
         // 낙사 처리
         if (characterController.isGrounded)
         {
