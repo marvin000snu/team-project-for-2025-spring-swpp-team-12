@@ -199,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
             Physics.Raycast(transform.position, Vector3.down, out hit, 15f))
         {
             GameObject groundObject = hit.collider.gameObject;
-            Debug.Log("Standing on: " + groundObject.name);
+            // Debug.Log("Standing on: " + groundObject.name);
             if (groundObject.CompareTag("SafeTile"))
             {
                 lastSafePosition = transform.position;
