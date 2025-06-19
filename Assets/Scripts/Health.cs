@@ -122,8 +122,10 @@ public class Health : MonoBehaviour, IDamageable
 
     void Die()
     {
-        // TODO : Death Handler
-        // gameObject.SetActive(false);
-
+        if (CompareTag("Player"))
+        {
+            Debug.Log("player die");
+            GameManager.Instance.DiscountLife();
+        }
     }
 }

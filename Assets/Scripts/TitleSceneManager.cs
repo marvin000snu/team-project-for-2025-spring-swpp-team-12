@@ -6,7 +6,6 @@ public class TitleSceneManager : MonoBehaviour
 {
     void Start()
     {
-        GameManager.Instance.SetPlayerName("");
-        GameManager.Instance.SetPlayTime(0.0f);
+        GameManager.Instance.InitializeInfo();
     }
 }
