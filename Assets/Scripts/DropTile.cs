@@ -27,10 +27,10 @@ public class DropTile : MonoBehaviour
         transform.position -= Vector3.up * 1.0f;
 
         // 아래로 힘을 직접 가함
-        rb.AddForce(Vector3.down * 100f, ForceMode.Impulse); // 빠르게 툭 떨어지는 느낌
+        rb.AddForce(Vector3.down * 50f, ForceMode.Impulse); // 빠르게 툭 떨어지는 느낌
 
         // 살짝 회전력도 추가 (불규칙한 낙하 느낌)
-        rb.AddTorque(Random.onUnitSphere * 20f, ForceMode.Impulse);
+        rb.AddTorque(Random.onUnitSphere * 15f, ForceMode.Impulse);
 
         StartCoroutine(DestroyAfterDelay());
     }
@@ -40,6 +40,14 @@ public class DropTile : MonoBehaviour
         yield return new WaitForSeconds(destroyDelay);
         Destroy(gameObject);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("HitBox")) return;
+
+        TriggerFall();
+    }
+    
     
 }
 
