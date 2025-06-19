@@ -179,4 +179,9 @@ public class PlayerMovement : MonoBehaviour
             vZ = 0;
         }
     }
+
+    public void SetCanMove(bool allowMove)
+    {
+        canMove = allowMove;
+    }
 }

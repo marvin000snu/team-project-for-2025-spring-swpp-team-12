@@ -6,6 +6,11 @@ public class TimeController : MonoBehaviour
     public TextMeshProUGUI timeText;
     private float elapsedTime = 0f;
 
+    void Start()
+    {
+        GameManager.Instance.OnGameClear += OnGameClearReceived;
+    }
+
     void Update()
     {
         elapsedTime += Time.deltaTime;
@@ -14,5 +19,12 @@ public class TimeController : MonoBehaviour
         int seconds = Mathf.FloorToInt(elapsedTime % 60f);
 
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    void OnGameClearReceived()
+    {
+        float finalTime = elapsedTime;
+
+        GameManager.Instance.SetPlayTime(finalTime);
     }
 }

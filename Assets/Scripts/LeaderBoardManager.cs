@@ -17,10 +17,10 @@ public class Leaderboard
 
 public class LeaderBoardManager : MonoBehaviour
 {
-    private string fileName = "leaderboard.json";
+    private string fileName = "Files/leaderboard.json";
     private Leaderboard leaderboard = new Leaderboard();
 
-    private string FilePath => Path.Combine(Application.persistentDataPath, fileName);
+    private string FilePath => Path.Combine(Application.dataPath, fileName);
 
     public void LoadLeaderboard()
     {
@@ -42,6 +42,7 @@ public class LeaderBoardManager : MonoBehaviour
 
     public void AddScore(string playerName, float playTime)
     {
+        if (playerName == "") return;
         PlayerEntry newEntry = new PlayerEntry { playerName = playerName, playTime = playTime };
         leaderboard.entries.Add(newEntry);
         leaderboard.entries.Sort((a, b) => a.playTime.CompareTo(b.playTime));

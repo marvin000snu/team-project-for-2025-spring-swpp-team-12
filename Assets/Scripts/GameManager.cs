@@ -11,9 +11,16 @@ public class GameManager : MonoBehaviour
     public event Action OnGameStart;
     public event Action OnGamePause;
     public event Action OnGameOver;
+    public event Action OnGameClear;
 
     private bool isPaused = false;
     private bool isBoost = false;
+
+    private float playTime = 0.0f;
+    private string playerName = "";
+    private int life = 3;
+
+
 
     [Serializable]
     public class HPChangedEvent : UnityEvent<int, int> { }
@@ -31,7 +38,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
     public void ChangeHP(int curr, int max)
     {
         OnHPChanged?.Invoke(curr, max);
@@ -46,6 +53,9 @@ public class GameManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1;
+        playTime = 0.0f;
+        playerName = "";
+        life = 3;
         OnGameStart?.Invoke();
     }
 
@@ -73,6 +83,27 @@ public class GameManager : MonoBehaviour
         OnGameOver?.Invoke();
     }
 
+    public void GameClear()
+    {
+        if (isPaused) return;
+        isPaused = true;
+        Time.timeScale = 0;
+        OnGameClear?.Invoke();
+    }
+
+    public void SetPlayTime(float t)
+    {
+        playTime = t;
+    }
+
+    public void SetPlayerName(string name)
+    {
+        playerName = name;
+    }
+    
+    public float GetPlayTime() => playTime;
+    public string GetPlayerName() => playerName;
+
     // Boost 관련 메서드
     public void SetBoost(bool value)
     {
@@ -88,4 +119,5 @@ public class GameManager : MonoBehaviour
     {
         return isBoost ? 1.5f : 1f;
     }
+
 }
