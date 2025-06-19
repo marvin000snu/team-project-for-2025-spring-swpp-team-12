@@ -22,6 +22,7 @@ public class MapLoader : MonoBehaviour
     public string mapFileName = "Stage1";
 
     private Dictionary<int, GameObject> prefabDict;
+    public static HashSet<Vector3Int> ValidChunks { get; private set; } = new();
 
     void Start()
     {
@@ -35,6 +36,11 @@ public class MapLoader : MonoBehaviour
         {
             BuildChunk(chunk, prevDir);
             prevDir = chunk.dir;
+        }
+        foreach (var chunk in map.chunks)
+        {
+            Vector3Int pos = new Vector3Int(chunk.x, chunk.y, chunk.z);
+            ValidChunks.Add(pos);
         }
     }
 

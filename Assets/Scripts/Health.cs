@@ -123,7 +123,7 @@ public class Health : MonoBehaviour, IDamageable
     void Die()
     {
         // TODO : Death Handler
+        Debug.Log($"{gameObject.name} has died!");
         // gameObject.SetActive(false);
-
     }
 }
