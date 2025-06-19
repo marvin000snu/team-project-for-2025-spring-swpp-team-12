@@ -3767,7 +3767,7 @@
       "y": -6,
       "z": 14,
       "dir": 4,
-      "is_horizontal": false,
+      "is_horizontal": true,
       "tiles":
       [
         1, 1, 1, 1, 1, 1, 1, 1, 1,
