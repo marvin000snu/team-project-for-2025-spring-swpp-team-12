@@ -19,7 +19,7 @@ public class MapLoader : MonoBehaviour
     public TilePrefabEntry[] tilePrefabs;
 
     [Header("Path for Map json")]
-    public string mapFileName = "TestMap";
+    public string mapFileName = "Stage1";
 
     private Dictionary<int, GameObject> prefabDict;
 
