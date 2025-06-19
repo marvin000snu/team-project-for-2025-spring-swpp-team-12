@@ -1,16 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build;
 using UnityEngine;
+
+public enum PlayerRunningState
+{
+    Horizontal, // 수평 이동
+    Hor2Vert,   // 수평에서 수직으로 전환
+    Vertical    // 수직 이동
+}
 
 public class PlayerMovement : MonoBehaviour
 {
     public Camera playerCamera;
 
     // float crouchSpeed = 3f;
-    float walkSpeed = 15f;
+    float walkSpeed = 100f;
     bool isRunning = false;
-    float runSpeed = 30f;
+    float runSpeed = 200f;
     float jumpPower = 20f;
     float gravity = 40f;
     float lookSpeed = 2f;
@@ -21,27 +27,42 @@ public class PlayerMovement : MonoBehaviour
     // bool isCrouching = false;
     // float wiggleSize = 0f;
 
-    int runState = 0;   // 0 = Horizontal, 1 = Hor2Vert 2 = Vert
+    public PlayerRunningState runState { get; private set; } = PlayerRunningState.Horizontal;
     float vX, vZ;
     float vertSpeed = 30f;
-    float rotateSpeed = 15f;
+    float rotateSpeed = 30f;
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
     private CharacterController characterController;
+    private Stamina stamina;
+    private Health health;
+    private Rigidbody rb;
 
     private bool canMove = true;
+
+    // Player Fall handler
+    private Vector3 lastSafePosition = Vector3.zero; // 마지막 안전한 위치
+    private float fallTimeout = 1f;
+    private float fallTimer = 0f; // 낙사 타이머
+
+    HashSet<Vector3Int> validChunks;
+
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+        stamina = gameObject.GetComponent<Stamina>();
+        health = gameObject.GetComponent<Health>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        validChunks = MapLoader.ValidChunks;
     }
 
     void Update()
     {
-        if (runState == 0)
+        if (runState == PlayerRunningState.Horizontal)
         {
 
             Vector3 forward = transform.TransformDirection(Vector3.forward);
@@ -52,10 +73,10 @@ public class PlayerMovement : MonoBehaviour
 
             bool isRunningKeyPushed = Input.GetKey(KeyCode.LeftShift);
 
-            Stamina s = gameObject.GetComponent<Stamina>();
+            
             if (isRunningKeyPushed)
             {
-                if (s.IsStaminaAvailable() && vInput > 0)
+                if (stamina.IsStaminaAvailable() && vInput > 0)
                     isRunning = true;
                 else
                     isRunning = false;
@@ -65,9 +86,9 @@ public class PlayerMovement : MonoBehaviour
 
 
             if (isRunning)
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000), StaminaChangeType.Run);
-            else if (!s.isStaminaFull())
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 500), StaminaChangeType.Regen);
+                stamina.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000), StaminaChangeType.Run);
+            else if (!stamina.isStaminaFull())
+                stamina.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 500), StaminaChangeType.Regen);
 
 
             float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * vInput : 0;
@@ -75,6 +96,11 @@ public class PlayerMovement : MonoBehaviour
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward * curSpeedX) + (right * curSpeedZ);
 
+            if (characterController.isGrounded)
+            {
+                movementDirectionY = 0f;
+                moveDirection.y = 0f;
+            }
             if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
             {
                 moveDirection.y = jumpPower;
@@ -95,26 +121,26 @@ public class PlayerMovement : MonoBehaviour
             {
                 rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
                 rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-                playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-                playerCamera.transform.localPosition = new Vector3(0, 7f, -27f);
+                // playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+                // playerCamera.transform.localPosition = new Vector3(0, 7f, -27f);
                 transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
 
-                Vector3 rayDir = playerCamera.transform.position - transform.position;
-                float maxCameraDistance = 30f;
-                if (Physics.Raycast(transform.position, rayDir, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("CameraCollision")))
-                {
-                    // Debug.Log("Hit: " + hit.collider.name);
-                    float distance = hit.distance;
-                    // Debug.Log("Distance: " + distance);
-                    //distance = Mathf.Clamp(distance, 0.5f, maxCameraDistance);
-                    if (distance < maxCameraDistance)
-                    {
-                        playerCamera.transform.position = hit.point - rayDir.normalized * 1.5f;
-                    }
-                }
+                // Vector3 rayDir = playerCamera.transform.position - transform.position;
+                // float maxCameraDistance = 30f;
+                // if (Physics.Raycast(transform.position, rayDir, out RaycastHit hit, float.MaxValue, LayerMask.GetMask("CameraCollision")))
+                // {
+                //     // Debug.Log("Hit: " + hit.collider.name);
+                //     float distance = hit.distance;
+                //     // Debug.Log("Distance: " + distance);
+                //     //distance = Mathf.Clamp(distance, 0.5f, maxCameraDistance);
+                //     if (distance < maxCameraDistance)
+                //     {
+                //         playerCamera.transform.position = hit.point - rayDir.normalized * 1.5f;
+                //     }
+                // }
             }
         }
-        else if (runState == 1)
+        else if (runState == PlayerRunningState.Hor2Vert)
         {
             float movementDirectionY = moveDirection.y;
             Vector3 targetPosition = new Vector3(vX, transform.position.y, vZ);
@@ -126,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                runState = 2;
+                runState = PlayerRunningState.Vertical;
             }
             moveDirection = direction;
             if (characterController.isGrounded)
@@ -139,10 +165,10 @@ public class PlayerMovement : MonoBehaviour
                 moveDirection.y = movementDirectionY;
                 moveDirection.y -= gravity * Time.deltaTime;
             }
-            Debug.Log("VertMove: " + moveDirection);
+            // Debug.Log("VertMove: " + moveDirection);
             characterController.Move(moveDirection * Time.deltaTime);
         }
-        else if (runState == 2)
+        else if (runState == PlayerRunningState.Vertical)
         {
             // vX, vZ 기준으로 좌우 입력시 회전
             Vector3 targetDirection = new Vector3(vX, transform.position.y, vZ) - transform.position;
@@ -161,20 +187,44 @@ public class PlayerMovement : MonoBehaviour
 
             characterController.Move(moveDirection * Time.deltaTime);
         }
+        // 낙사 처리
+        if (characterController.isGrounded)
+        {
+            lastSafePosition = transform.position;
+            lastSafePosition.y += 10f; // 약간 위로 올려서 안전한 위치로 설정
+        }
+        Vector3Int currentChunk = GetPlayerChunk(transform.position);
+        if (validChunks.Contains(currentChunk))
+        {
+            fallTimer = 0f; // 유효한 청크에 있으면 타이머 초기화
+        }
+        else
+        {
+            Debug.LogWarning("Player is in an invalid chunk: " + currentChunk);
+            fallTimer += Time.deltaTime;
+
+            if (fallTimer >= fallTimeout)
+            {
+                moveDirection = Vector3.zero; // 낙사 타이머가 초과되면 이동 방향 초기화
+                health.ChangeHealth(30); // 낙사로 인해 체력 감소
+                canMove = false; // 낙사 타이머가 초과되면 이동 불가
+                Respawn(); // 낙사 처리
+            }
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("VertStart"))
         {
-            runState = 1;
+            runState = PlayerRunningState.Hor2Vert;
             vX = other.gameObject.transform.position.x;
             vZ = other.gameObject.transform.position.z;
             Debug.Log("VertStart, vX: " + vX + ", vZ: " + vZ);
         }
         else if (other.gameObject.CompareTag("VertEnd"))
         {
-            runState = 0;
+            runState = PlayerRunningState.Horizontal;
             vX = 0;
             vZ = 0;
         }
@@ -183,5 +233,32 @@ public class PlayerMovement : MonoBehaviour
     public void SetCanMove(bool allowMove)
     {
         canMove = allowMove;
+    }
+    Vector3Int GetPlayerChunk(Vector3 position, int chunkSize = 70)
+    {
+        return new Vector3Int(
+            Mathf.FloorToInt((position.x + chunkSize / 2f) / chunkSize),
+            Mathf.FloorToInt((position.y + chunkSize / 2f) / chunkSize),
+            Mathf.FloorToInt((position.z + chunkSize / 2f) / chunkSize)
+        );
+    }
+    void Respawn()
+    {
+        if (lastSafePosition != Vector3.zero)
+        {
+            characterController.transform.position = lastSafePosition; // 마지막 안전한 위치로 이동
+            fallTimer = 0f; // 낙사 타이머 초기화
+            Debug.Log("Player respawned at last safe position: " + lastSafePosition);
+            StartCoroutine(RespawnDelay(0.3f)); // 딜레이 후 이동 가능
+        }
+        else
+        {
+            Debug.LogWarning("No last safe position found for respawn!");
+        }
+    }
+    private IEnumerator RespawnDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        canMove = true; // 딜레이 후 이동 가능
     }
 }

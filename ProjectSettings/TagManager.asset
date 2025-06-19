@@ -6,6 +6,7 @@ TagManager:
   tags:
   - VertStart
   - VertEnd
+  - HitBox
   layers:
   - Default
   - TransparentFX

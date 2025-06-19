@@ -127,5 +127,8 @@ public class Health : MonoBehaviour, IDamageable
             Debug.Log("player die");
             GameManager.Instance.DiscountLife();
         }
+        Debug.Log($"{gameObject.name} has died!");
+        // gameObject.SetActive(false);
+
     }
 }
