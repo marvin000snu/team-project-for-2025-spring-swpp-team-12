@@ -8,7 +8,7 @@ public class SpeedBoostEffect : ScriptableObject, IEffect
 
     public void Apply(GameObject player)
     {
-        GameManager.Instance.SetBoost(true);
+        GameManager.Instance.isBoosted = true;
         MonoBehaviour mono = player.GetComponent<MonoBehaviour>();
         if (mono != null)
         {
@@ -19,6 +19,6 @@ public class SpeedBoostEffect : ScriptableObject, IEffect
     private IEnumerator ResetBoostAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        GameManager.Instance.SetBoost(false);
+        GameManager.Instance.isBoosted = false;
     }
 }

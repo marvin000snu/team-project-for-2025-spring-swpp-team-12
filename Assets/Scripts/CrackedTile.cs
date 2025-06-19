@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CrackedTile : MonoBehaviour
 {
-    [SerializeField] private float fallSpeed = 2f;       // 떨어지는 속도
+    [SerializeField] private float fallSpeed = 4f;       // 떨어지는 속도
     [SerializeField] private float fallDelay = 0.3f;     // 충돌 후 지연 시간
     [SerializeField] private float fallDistance = 5f;    // 사라지기까지 떨어질 거리
 

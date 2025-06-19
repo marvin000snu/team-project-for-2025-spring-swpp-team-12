@@ -12,6 +12,7 @@ public class DotDamageEffect : ScriptableObject, IEffect
     {
         if (player.TryGetComponent<PlayerMovement>(out var mono))
         {
+            if (GameManager.Instance.isBurning) return;
             mono.StartCoroutine(ApplyDotDamage(player, interval, ticks));
         }
         else
@@ -29,6 +30,11 @@ public class DotDamageEffect : ScriptableObject, IEffect
             {
                 health.ChangeHealth(dotDamage);
                 Debug.Log($"[DotDamageEffect] {player.name}에게 {dotDamage}의 지속 피해를 입혔습니다. 남은 체력: {health.CurrentHealth}");
+                if (health.CurrentHealth <= 0)
+                {
+                    Debug.Log($"[DotDamageEffect] {player.name}이(가) 사망했습니다. 지속 피해를 중지합니다.");
+                    break;
+                }
                 yield return new WaitForSeconds(interval);
             }
         }

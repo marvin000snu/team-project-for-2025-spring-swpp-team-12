@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Unity.VisualScripting;
 
 public enum Direction
 {
@@ -9,7 +10,7 @@ public enum Direction
     Left,   // -X
     Right,  // +X
     Front,  // +Z
-    Back    // -Z
+    Back,    // -Z
 }
 
 public class MapLoader : MonoBehaviour
@@ -22,7 +23,8 @@ public class MapLoader : MonoBehaviour
     public string mapFileName = "Stage1";
 
     private Dictionary<int, GameObject> prefabDict;
-    public static HashSet<Vector3Int> ValidChunks { get; private set; } = new();
+    public static HashSet<Vector3Int> ChunksHashSet { get; private set; } = new();
+    public static List<Direction> DirectionList { get; private set; } = new();
 
     void Start()
     {
@@ -31,19 +33,50 @@ public class MapLoader : MonoBehaviour
         TextAsset json = Resources.Load<TextAsset>($"Maps/{mapFileName}");
         ChunkMap map = JsonUtility.FromJson<ChunkMap>(json.text);
 
-        Direction prevDir = Direction.Front;    // All maps start from Front direction
+        Direction prevDir = Direction.Back;    // All maps start from Front direction
+        Direction lastHorizontalDir = Direction.Front; // Track last horizontal direction
+        int x=0, y=0, z=0;
         foreach (var chunk in map.chunks)
         {
-            BuildChunk(chunk, prevDir);
+            BuildChunk(chunk, prevDir, lastHorizontalDir, x, y, z);
             prevDir = chunk.dir;
-        }
-        foreach (var chunk in map.chunks)
-        {
-            Vector3Int pos = new Vector3Int(chunk.x, chunk.y, chunk.z);
-            ValidChunks.Add(pos);
+            if (chunk.is_horizontal)
+            {
+                lastHorizontalDir = chunk.dir;
+            }
+            Vector3Int pos = new Vector3Int(x, y, z);
+            ChunksHashSet.Add(pos);
+            DirectionList.Add(chunk.dir);
+
+            UpdatePosition(ref x, ref y, ref z, chunk.dir);
         }
     }
-
+    void UpdatePosition(ref int x, ref int y, ref int z, Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.Up:
+                y++;
+                break;
+            case Direction.Down:
+                y--;
+                break;
+            case Direction.Left:
+                x--;
+                break;
+            case Direction.Right:
+                x++;
+                break;
+            case Direction.Front:
+                z++;
+                break;
+            case Direction.Back:
+                z--;
+                break;
+            default:
+                throw new ArgumentException("Invalid direction: " + dir);
+        }
+    }
     void LoadPrefabDict()
     {
         prefabDict = new Dictionary<int, GameObject>();
@@ -112,34 +145,61 @@ public class MapLoader : MonoBehaviour
 
         return false;
     }
-
-    void BuildChunk(ChunkData chunk, Direction prevDir)
+    Quaternion GetChunkRotationFromDirection(Direction dir, Direction lastHorizontalDir)
     {
-        Debug.Log(prevDir);
-        Vector3 chunkPos = new Vector3(chunk.x, chunk.y, chunk.z);
-        chunkPos *= 70f;
-        
-        Quaternion rotation = GetRotationFromDirection(prevDir, chunk.dir);
+        switch (dir)
+        {
+            case Direction.Left: return Quaternion.Euler(0, -90, 0);
+            case Direction.Right: return Quaternion.Euler(0, 90, 0);
+            case Direction.Front: return Quaternion.identity; // No rotation needed
+            case Direction.Back: return Quaternion.Euler(0, 180, 0);
+            case Direction.Down: 
+                switch (lastHorizontalDir)
+                {
+                    case Direction.Left: return Quaternion.Euler(90, -90, 0);
+                    case Direction.Right: return Quaternion.Euler(90, 90, 0);
+                    case Direction.Front: return Quaternion.Euler(90, 0, 0);
+                    case Direction.Back: return Quaternion.Euler(90, 180, 0);
+                    default: throw new ArgumentException("Invalid last horizontal direction: " + lastHorizontalDir);
+                }
+            default: throw new ArgumentException("Invalid direction: " + dir);
+        }
+    }
 
+    void BuildChunk(ChunkData chunk, Direction prevDir, Direction lastHorizontalDir, int cx, int cy, int cz)
+    {
+        // Debug.Log(prevDir);
+        Vector3 chunkPos = new Vector3(cx, cy, cz);
+        chunkPos *= 70f;
+
+        Quaternion rotation = GetChunkRotationFromDirection(chunk.dir, lastHorizontalDir);
+        
         GameObject container = Instantiate(chunkContainerPrefab, chunkPos, rotation, transform);
-        container.name = $"Chunk_{chunk.x}_{chunk.y}_{chunk.z}";
+        container.name = $"Chunk_{cx}_{cy}_{cz}";
 
         if (chunk.tiles == null)
         {
             Debug.LogError("No tiles");
         }
 
+        bool isCeiling = false;
         for (int i = 0; i < 729; i++)
         {
             int type = chunk.tiles[i];
             if (type == 0) continue;        // Air
 
-            int y = i / 81;
-            int z = i % 81 / 9;
+            // int y = i / 81;
+            // int z = i % 81 / 9;
+            // int x = i % 9;
+            int z = i / 81;
+            int y = 8 - (i % 81 / 9);
             int x = i % 9;
 
+            if (type == 1 && y == 8 && chunk.is_horizontal) { isCeiling = true; } // Skip ceiling tiles
+
             Vector3 result = -(Quaternion.Inverse(rotation) * DirToVec(prevDir));
-            if (i == 0) {
+            if (i == 0)
+            {
                 Debug.Log("result");
                 Debug.Log(result);
             }
@@ -153,6 +213,13 @@ public class MapLoader : MonoBehaviour
             if (prefabDict.TryGetValue(type, out GameObject prefab))
             {
                 Instantiate(prefab, worldPos, rotation, container.transform);
+                if (isCeiling)
+                {
+                    prefabDict.TryGetValue(2, out prefab);
+                    worldPos -= new Vector3(0, 10f, 0);
+                    Instantiate(prefab, worldPos, rotation, container.transform);
+                    isCeiling = false;
+                }
             }
             else
             {
@@ -162,23 +229,23 @@ public class MapLoader : MonoBehaviour
     }
 
 
-    Quaternion GetRotationFromDirection(Direction indir, Direction outdir)
-    {
-        Vector3 indirVec = DirToVec(indir);
-        Vector3 outdirVec = DirToVec(outdir);
+    // Quaternion GetRotationFromDirection(Direction indir, Direction outdir)
+    // {
+    //     Vector3 indirVec = DirToVec(indir);
+    //     Vector3 outdirVec = DirToVec(outdir);
 
-        // Step 1: rotate Vector3.forward → indirVec
-        Quaternion toIndir = Quaternion.FromToRotation(Vector3.forward, indirVec);
+    //     // Step 1: rotate Vector3.forward → indirVec
+    //     Quaternion toIndir = Quaternion.FromToRotation(Vector3.forward, indirVec);
 
-        // Step 2: figure out how to rotate indirVec → outdirVec (in the rotated space)
-        Vector3 outdirInLocal = Quaternion.Inverse(toIndir) * outdirVec;
+    //     // Step 2: figure out how to rotate indirVec → outdirVec (in the rotated space)
+    //     Vector3 outdirInLocal = Quaternion.Inverse(toIndir) * outdirVec;
 
-        // Step 3: rotate forward → outdirInLocal
-        Quaternion adjust = Quaternion.FromToRotation(Vector3.forward, outdirInLocal);
+    //     // Step 3: rotate forward → outdirInLocal
+    //     Quaternion adjust = Quaternion.FromToRotation(Vector3.forward, outdirInLocal);
 
-        // Final rotation = toIndir followed by adjust
-        return toIndir * adjust;
-    }
+    //     // Final rotation = toIndir followed by adjust
+    //     return toIndir * adjust;
+    // }
     Direction GetDirectionFromRotation(Quaternion rot)
     {
         Vector3 dir = rot * Vector3.forward;
