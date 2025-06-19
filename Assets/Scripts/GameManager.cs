@@ -115,6 +115,11 @@ public class GameManager : MonoBehaviour
         return isBoost;
     }
 
+    public void SetDotDamage(bool value)
+    {
+        
+    }
+
     public float GetSpeedMultiplier()
     {
         return isBoost ? 1.5f : 1f;

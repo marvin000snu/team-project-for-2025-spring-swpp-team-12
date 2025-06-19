@@ -3,15 +3,27 @@ using UnityEngine.Events;
 using System;
 using System.Collections;
 
+public enum StaminaChangeType
+{
+    Default,
+    Regen,
+    Item,
+    Run,    // amount < 0
+}
+
 [DisallowMultipleComponent]
 public class Stamina : MonoBehaviour
 {
     [SerializeField] int maxStamina = 1000;
-    [SerializeField] float recoveryRate = 10f; // 초당 회복량
+    // [SerializeField] float recoveryRate = 10f; // 초당 회복량
 
     private int currentStamina;
-    private bool isRecovering = true;
-    private bool isStaminaLocked = false;
+    // private bool isRecovering = true;
+
+    // 스테미나 사용이 불가능한 상태 (달리기 등)
+    private bool isStaminaUnavailable = false;
+    private bool isStaminaNotRegenerating = false;
+    private bool isExhausted = false;
 
     public UnityEvent<int, int> OnStaminaChanged; // <current, max>
 
@@ -25,56 +37,68 @@ public class Stamina : MonoBehaviour
 
     void Update()
     {
-        // if (isRecovering && currentStamina < maxStamina)
-        // {
-        //     RecoverStamina();
-        // }
-        // Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
+        Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
     }
 
     public bool IsStaminaAvailable()
     {
-        if (currentStamina == 0 || isStaminaLocked)
+        if (currentStamina == 0 || isStaminaUnavailable)
         {
             return false;
         }
         return true;
     }
-    public void ChangeStamina(int amount)
+
+    public bool isStaminaFull()
     {
-        if (isStaminaLocked) return;
+        return currentStamina == maxStamina;
+    }
+
+    public void ChangeStamina(int amount, StaminaChangeType type = StaminaChangeType.Default)
+    {
+        if (type == StaminaChangeType.Regen && isStaminaNotRegenerating) return;
+        if (isStaminaUnavailable && (type==StaminaChangeType.Run)) return;
+        if (isExhausted && type == StaminaChangeType.Regen)
+        {
+            amount /= 2; // Reduce regen amount by half if exhausted
+        }
+
         currentStamina = Mathf.Clamp(currentStamina + amount, 0, maxStamina);
         OnStaminaChanged?.Invoke(currentStamina, maxStamina);
         if (currentStamina == 0)
         {
             Debug.Log("Exhausted!");
-            StartCoroutine(LockStamina(3f));
+            isExhausted = true;
+            StartCoroutine(LockStamina(2f));
+        }
+        else if (currentStamina == maxStamina)
+        {
+            Debug.Log("Stamina fully recovered!");
+            isExhausted = false;
         }
     }
-
-    private void RecoverStamina()
-    {
-        ChangeStamina(Mathf.RoundToInt(recoveryRate * Time.deltaTime));
-    }
-
-
     private IEnumerator LockStamina(float duration)
     {
-        isStaminaLocked = true;
+        isStaminaUnavailable = true;
         yield return new WaitForSeconds(duration);
-        isStaminaLocked = false;
+        isStaminaUnavailable = false;
     }
 
-    public void StopRecovery(float duration)
-    {
-        StopAllCoroutines();
-        StartCoroutine(StopRecoveryCoroutine(duration));
-    }
+    /* Unused functions */
+    // private void RecoverStamina()
+    // {
+    //     ChangeStamina(Mathf.RoundToInt(recoveryRate * Time.deltaTime));
+    // }
+    // public void StopRecovery(float duration)
+    // {
+    //     StopAllCoroutines();
+    //     StartCoroutine(StopRecoveryCoroutine(duration));
+    // }
 
-    private IEnumerator StopRecoveryCoroutine(float duration)
-    {
-        isRecovering = false;
-        yield return new WaitForSeconds(duration);
-        isRecovering = true;
-    }
+    // private IEnumerator StopRecoveryCoroutine(float duration)
+    // {
+    //     isRecovering = false;
+    //     yield return new WaitForSeconds(duration);
+    //     isRecovering = true;
+    // }
 }
