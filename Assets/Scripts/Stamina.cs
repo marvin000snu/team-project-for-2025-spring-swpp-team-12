@@ -6,7 +6,7 @@ using System.Collections;
 [DisallowMultipleComponent]
 public class Stamina : MonoBehaviour
 {
-    [SerializeField] int maxStamina = 100000;
+    [SerializeField] int maxStamina = 1000;
     [SerializeField] float recoveryRate = 10f; // 초당 회복량
 
     private int currentStamina;
@@ -29,7 +29,7 @@ public class Stamina : MonoBehaviour
         // {
         //     RecoverStamina();
         // }
-        Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
+        // Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
     }
 
     public bool IsStaminaAvailable()
