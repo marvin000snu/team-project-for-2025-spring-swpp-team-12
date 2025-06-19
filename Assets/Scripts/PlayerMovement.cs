@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build;
-using UnityEditor.Callbacks;
 using UnityEngine;
 
 public enum PlayerRunningState
@@ -37,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
     private CharacterController characterController;
+    private Stamina stamina;
+    private Health health;
     private Rigidbody rb;
 
     private bool canMove = true;
@@ -53,6 +53,8 @@ public class PlayerMovement : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
+        stamina = gameObject.GetComponent<Stamina>();
+        health = gameObject.GetComponent<Health>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         validChunks = MapLoader.ValidChunks;
@@ -71,10 +73,10 @@ public class PlayerMovement : MonoBehaviour
 
             bool isRunningKeyPushed = Input.GetKey(KeyCode.LeftShift);
 
-            Stamina s = gameObject.GetComponent<Stamina>();
+            
             if (isRunningKeyPushed)
             {
-                if (s.IsStaminaAvailable() && vInput > 0)
+                if (stamina.IsStaminaAvailable() && vInput > 0)
                     isRunning = true;
                 else
                     isRunning = false;
@@ -84,9 +86,9 @@ public class PlayerMovement : MonoBehaviour
 
 
             if (isRunning)
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000), StaminaChangeType.Run);
-            else if (!s.isStaminaFull())
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 500), StaminaChangeType.Regen);
+                stamina.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000), StaminaChangeType.Run);
+            else if (!stamina.isStaminaFull())
+                stamina.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 500), StaminaChangeType.Regen);
 
 
             float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * vInput : 0;
@@ -204,6 +206,7 @@ public class PlayerMovement : MonoBehaviour
             if (fallTimer >= fallTimeout)
             {
                 moveDirection = Vector3.zero; // 낙사 타이머가 초과되면 이동 방향 초기화
+                health.ChangeHealth(30); // 낙사로 인해 체력 감소
                 canMove = false; // 낙사 타이머가 초과되면 이동 불가
                 Respawn(); // 낙사 처리
             }
