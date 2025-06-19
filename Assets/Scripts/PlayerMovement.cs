@@ -65,9 +65,9 @@ public class PlayerMovement : MonoBehaviour
 
 
             if (isRunning)
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000));
-            else
-                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 1000));
+                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * -1000), StaminaChangeType.Run);
+            else if (!s.isStaminaFull())
+                s.ChangeStamina(Mathf.RoundToInt(Time.deltaTime * 500), StaminaChangeType.Regen);
 
 
             float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * vInput : 0;
