@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
         life -= 1;
         if (life <= 0)
         {
+            GameSceneUIManager uIManager = FindObjectOfType<GameSceneUIManager>();
+            uIManager.DisableLastActiveLife();
             GameOver();
         }
         else
@@ -153,6 +155,7 @@ public class GameManager : MonoBehaviour
 
     public float GetPlayTime() => playTime;
     public string GetPlayerName() => playerName;
+    public int GetLife() => life;
 
     // Boost 관련 메서드
     public void SetBoost(bool value)
