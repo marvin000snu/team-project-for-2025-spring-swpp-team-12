@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireBall : Obstacle
+public class FireBall : Fire
 {
     protected override void OnHitPlayer()
     {

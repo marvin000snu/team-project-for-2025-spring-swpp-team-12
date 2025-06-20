@@ -14,6 +14,7 @@ public class PassiveItem : Item
     public override void OnUse(GameObject player)
     {
         // PassiveItem은 직접 사용되지 않음
-        Debug.Log($"[WARN] OnUse called on PassiveItem: {itemName}, which shouldn't be used manually.");
+        //Debug.Log($"[WARN] OnUse called on PassiveItem: {itemName}, which shouldn't be used manually.");
+        ApplyEffect(player);
     }
 }

@@ -5,15 +5,16 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Effect/InvincibleDash")]
 public class InvincibleDashEffect : ScriptableObject, IEffect
 {
-    [SerializeField] protected float invincibleDuration = 5f;
+    [SerializeField] protected float InvincibleDuration = 5f;
     private int damageReductionFactor = 0; // 0 = 무적, 0.5 = 1/2, etc.
 
     public void Apply(GameObject player)
     {
         if (player.TryGetComponent<Health>(out var health))
         {
-            health.ShieldMode(invincibleDuration, damageReductionFactor);
-            Debug.Log($"[ShieldEffect] {player.name} Shield applied ({invincibleDuration} sec, reduction: {damageReductionFactor})");
+            health.ShieldMode(InvincibleDuration, damageReductionFactor);
+            Debug.Log($"[ShieldEffect] {player.name} Shield applied ({InvincibleDuration} sec, reduction: {damageReductionFactor})");
+
         }
         else
         {
