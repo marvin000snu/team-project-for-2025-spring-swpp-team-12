@@ -40,7 +40,7 @@ public class MapLoader : MonoBehaviour
         {
             BuildChunk(chunk, prevDir, lastHorizontalDir, x, y, z);
             prevDir = chunk.dir;
-            if (chunk.is_horizontal)
+            if (IsChunkHorizontal(chunk.dir))
             {
                 lastHorizontalDir = chunk.dir;
             }
@@ -165,6 +165,10 @@ public class MapLoader : MonoBehaviour
             default: throw new ArgumentException("Invalid direction: " + dir);
         }
     }
+    bool IsChunkHorizontal(Direction dir)
+    {
+        return !(dir == Direction.Up || dir == Direction.Down);
+    }
 
     void BuildChunk(ChunkData chunk, Direction prevDir, Direction lastHorizontalDir, int cx, int cy, int cz)
     {
@@ -195,7 +199,6 @@ public class MapLoader : MonoBehaviour
             int y = 8 - (i % 81 / 9);
             int x = i % 9;
 
-            if (type == 1 && y == 8 && chunk.is_horizontal) { isCeiling = true; } // Skip ceiling tiles
 
             Vector3 result = -(Quaternion.Inverse(rotation) * DirToVec(prevDir));
             if (i == 0)
@@ -204,6 +207,8 @@ public class MapLoader : MonoBehaviour
                 Debug.Log(result);
             }
             if (ShouldSkipTile(x, y, z, VecToDir(result))) continue;
+            
+            if (type == 1 && y == 8 && IsChunkHorizontal(chunk.dir)) { isCeiling = true; }
 
             Vector3 localPos = new Vector3(x, y, z);
             localPos *= 10f;
@@ -284,10 +289,6 @@ public class ChunkMap
 [System.Serializable]
 public class ChunkData
 {
-    public int x;
-    public int y;
-    public int z;
     public Direction dir;
-    public bool is_horizontal;
     public int[] tiles;
 }

@@ -18,7 +18,7 @@ public class DropTile : MonoBehaviour
 
     public void TriggerFall()
     {
-        Debug.Log("drop tile");
+        // Debug.Log("drop tile");
 
         rb.isKinematic = false;
         rb.useGravity = true;
