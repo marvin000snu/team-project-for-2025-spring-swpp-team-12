@@ -7,6 +7,7 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("OnTrigger");
         if (other.CompareTag("Player") && itemData != null)
         {
             Debug.Log($"[Item] {itemData.itemName} OnPickup called");
