@@ -13,7 +13,7 @@ public class ShieldEffect : ScriptableObject, IEffect
         if (player.TryGetComponent<Health>(out var health))
         {
             health.ShieldMode(shieldDuration, damageReductionFactor);
-            //Debug.Log($"[ShieldEffect] {player.name} Shield applied ({shieldDuration} sec, reduction: {damageReductionFactor})");
+            Debug.Log($"[ShieldEffect] {player.name} Shield applied ({shieldDuration} sec, reduction: {damageReductionFactor})");
         }
         else
         {

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ShieldEffect
   m_EditorClassIdentifier: 
   shieldDuration: 5
-  damageReductionFactor: 0
+  damageReductionFactor: 2
