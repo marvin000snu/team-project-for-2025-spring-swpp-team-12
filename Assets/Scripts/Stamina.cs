@@ -37,6 +37,7 @@ public class Stamina : MonoBehaviour
 
     void Update()
     {
+
         // Debug.Log("Current Stamina : " + currentStamina + "/" + maxStamina);
     }
 

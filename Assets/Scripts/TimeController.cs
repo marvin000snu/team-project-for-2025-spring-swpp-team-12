@@ -9,6 +9,7 @@ public class TimeController : MonoBehaviour
     void Start()
     {
         GameManager.Instance.OnGameClear += OnGameClearReceived;
+        elapsedTime = GameManager.Instance.GetPlayTime();
     }
 
     void Update()
@@ -19,6 +20,11 @@ public class TimeController : MonoBehaviour
         int seconds = Mathf.FloorToInt(elapsedTime % 60f);
 
         timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public float GetTime()
+    {
+        return elapsedTime;
     }
 
     void OnGameClearReceived()
