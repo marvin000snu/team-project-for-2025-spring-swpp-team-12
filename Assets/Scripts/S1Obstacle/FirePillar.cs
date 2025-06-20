@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FirePillar : Obstacle
+public class FirePillar : Fire
 {
     protected override void OnHitPlayer()
     {

@@ -16,4 +16,4 @@ MonoBehaviour:
   thumbnail: {fileID: 21300000, guid: 9d0bc363b0fde444b9ab3bec94e72026, type: 3}
   prefab: {fileID: 5714730232498481816, guid: 92b38830183ae924f89bc0b7f3b6913f, type: 3}
   effectAsset: {fileID: 11400000, guid: 7fdbd6b00a43ffb43aa76e73bfa5fb62, type: 2}
-  duration: 5
+  duration: 10

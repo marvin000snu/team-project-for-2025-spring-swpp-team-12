@@ -27,18 +27,21 @@ public class DotDamageEffect : ScriptableObject, IEffect
     {
         if (player.TryGetComponent<Health>(out var health))
         {
-            for (int i = 0; i < ticks; i++)
+            if (!health.GetFireShield())
             {
-                health.ChangeHealth(dotDamage);
-                Debug.Log($"[DotDamageEffect] {player.name}에게 {dotDamage}의 지속 피해를 입혔습니다. 남은 체력: {health.CurrentHealth}");
-                if (health.CurrentHealth <= 0)
+                for (int i = 0; i < ticks; i++)
                 {
-                    Debug.Log($"[DotDamageEffect] {player.name}이(가) 사망했습니다. 지속 피해를 중지합니다.");
-                    break;
+                    health.ChangeHealth(dotDamage);
+                    Debug.Log($"[DotDamageEffect] {player.name}에게 {dotDamage}의 지속 피해를 입혔습니다. 남은 체력: {health.CurrentHealth}");
+                    if (health.CurrentHealth <= 0)
+                    {
+                        Debug.Log($"[DotDamageEffect] {player.name}이(가) 사망했습니다. 지속 피해를 중지합니다.");
+                        break;
+                    }
+                    yield return new WaitForSeconds(interval);
                 }
-                yield return new WaitForSeconds(interval);
+                GameManager.Instance.isBurning = false;
             }
-            GameManager.Instance.isBurning = false;
         }
         else
         {

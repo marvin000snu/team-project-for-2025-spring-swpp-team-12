@@ -13,7 +13,7 @@ public class InvincibleDashEffect : ScriptableObject, IEffect
         if (player.TryGetComponent<Health>(out var health))
         {
             health.ShieldMode(InvincibleDuration, damageReductionFactor);
-            Debug.Log($"[ShieldEffect] {player.name} Shield applied ({invincibleDuration} sec, reduction: {damageReductionFactor})");
+            Debug.Log($"[ShieldEffect] {player.name} Shield applied ({InvincibleDuration} sec, reduction: {damageReductionFactor})");
         }
         else
         {
