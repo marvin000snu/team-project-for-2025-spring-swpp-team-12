@@ -159,12 +159,6 @@ public class GameManager : MonoBehaviour
     public int GetLife() => life;
 
 
-    public void SetDotDamage(bool value)
-    {
-
-    }
-
-
     public float GetSpeedMultiplier()
     {
         return isBoosted ? 1.5f : 1f;
