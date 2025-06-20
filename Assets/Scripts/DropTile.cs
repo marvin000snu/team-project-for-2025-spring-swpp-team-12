@@ -18,7 +18,7 @@ public class DropTile : MonoBehaviour
 
     public void TriggerFall()
     {
-        //Debug.Log("drop tile");
+        Debug.Log("drop tile");
 
         rb.isKinematic = false;
         rb.useGravity = true;
@@ -27,10 +27,10 @@ public class DropTile : MonoBehaviour
         transform.position -= Vector3.up * 1.0f;
 
         // 아래로 힘을 직접 가함
-        rb.AddForce(Vector3.down * 50f, ForceMode.Impulse); // 빠르게 툭 떨어지는 느낌
+        rb.AddForce(Vector3.down * 500f, ForceMode.Impulse); // 빠르게 툭 떨어지는 느낌
 
         // 살짝 회전력도 추가 (불규칙한 낙하 느낌)
-        rb.AddTorque(Random.onUnitSphere * 15f, ForceMode.Impulse);
+        rb.AddTorque(Random.onUnitSphere * 150f, ForceMode.Impulse);
 
         StartCoroutine(DestroyAfterDelay());
     }
@@ -45,7 +45,7 @@ public class DropTile : MonoBehaviour
     {
         if (!other.CompareTag("HitBox")) return;
 
-        TriggerFall();
+        Invoke("TriggerFall", Random.Range(0.1f, 0.5f));
     }
     
     
