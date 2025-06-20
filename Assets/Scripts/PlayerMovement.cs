@@ -61,6 +61,9 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
         validChunks = MapLoader.ChunksHashSet;
         animator = GetComponentInChildren<Animator>();
+
+        // runState = PlayerRunningState.Horizontal;
+        animator.SetInteger("i_runState", (int)runState);
     }
 
     void Update()
@@ -106,6 +109,8 @@ public class PlayerMovement : MonoBehaviour
             }
             if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
             {
+                // Jump
+                animator.SetTrigger("t_jump");
                 moveDirection.y = jumpPower;
             }
             else
@@ -156,6 +161,7 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 runState = PlayerRunningState.Vertical;
+                animator.SetInteger("i_runState", (int)runState);
             }
             moveDirection = direction;
             if (characterController.isGrounded)
@@ -232,6 +238,7 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.CompareTag("VertStart"))
         {
             runState = PlayerRunningState.Hor2Vert;
+            animator.SetInteger("i_runState", (int)runState);
             vX = other.gameObject.transform.position.x;
             vZ = other.gameObject.transform.position.z;
             Debug.Log("VertStart, vX: " + vX + ", vZ: " + vZ);
@@ -239,6 +246,7 @@ public class PlayerMovement : MonoBehaviour
         else if (other.gameObject.CompareTag("VertEnd"))
         {
             runState = PlayerRunningState.Horizontal;
+            animator.SetInteger("i_runState", (int)runState);
             vX = 0;
             vZ = 0;
         }
