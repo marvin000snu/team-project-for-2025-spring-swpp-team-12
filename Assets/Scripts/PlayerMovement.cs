@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
         health = gameObject.GetComponent<Health>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        validChunks = MapLoader.ValidChunks;
+        validChunks = MapLoader.ChunksHashSet;
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -191,14 +191,22 @@ public class PlayerMovement : MonoBehaviour
             characterController.Move(moveDirection * Time.deltaTime);
         }
         // Debug.Log("Velocity: " + characterController.velocity.magnitude);
-        animator.SetFloat("f_speed", characterController.velocity.magnitude);
+        animator.SetFloat("f_speed", new Vector3(characterController.velocity.x, 0f, characterController.velocity.z).magnitude);
 
         // 낙사 처리
-        if (characterController.isGrounded)
+        RaycastHit hit;
+        if (characterController.isGrounded &&
+            Physics.Raycast(transform.position, Vector3.down, out hit, 15f))
         {
-            lastSafePosition = transform.position;
-            lastSafePosition.y += 10f; // 약간 위로 올려서 안전한 위치로 설정
+            GameObject groundObject = hit.collider.gameObject;
+            Debug.Log("Standing on: " + groundObject.name);
+            if (groundObject.CompareTag("SafeTile"))
+            {
+                lastSafePosition = transform.position;
+                lastSafePosition.y += 10f; // 약간 위로 올려서 안전한 위치로 설정
+            }
         }
+
         Vector3Int currentChunk = GetPlayerChunk(transform.position);
         if (validChunks.Contains(currentChunk))
         {
@@ -212,7 +220,7 @@ public class PlayerMovement : MonoBehaviour
             if (fallTimer >= fallTimeout)
             {
                 moveDirection = Vector3.zero; // 낙사 타이머가 초과되면 이동 방향 초기화
-                health.ChangeHealth(30); // 낙사로 인해 체력 감소
+                health.ChangeHealth(1); // 낙사로 인해 체력 감소
                 canMove = false; // 낙사 타이머가 초과되면 이동 불가
                 Respawn(); // 낙사 처리
             }

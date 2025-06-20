@@ -7,6 +7,7 @@ TagManager:
   - VertStart
   - VertEnd
   - HitBox
+  - SafeTile
   layers:
   - Default
   - TransparentFX
