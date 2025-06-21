@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 
 // TODO : Shake Effect or visualization of health bar will be implemented in actual HP UI by listening OnHealthChanged Event.
-    
+
 [DisallowMultipleComponent]
 public class Health : MonoBehaviour, IDamageable
 {
@@ -28,7 +28,11 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] protected int damageReductionFactor = 0;
     private Coroutine shieldCoroutine;
 
-    
+    private bool hasFireShield = false;
+
+
+
+
     void Awake()
     {
         currentHealth = maxHealth;
@@ -61,7 +65,7 @@ public class Health : MonoBehaviour, IDamageable
             //Debug.Log($"[Health] Shield active - damage reduced: {amount} -> {reducedAmount}");
             amount = reducedAmount;
 
-            
+
         }
 
         currentHealth -= amount;
@@ -73,7 +77,7 @@ public class Health : MonoBehaviour, IDamageable
         // StartCoroutine(ShakeHealthBar());
         if (currentHealth <= 0)
             Die();
-            
+
         if (invincibleDuration > 0f && amount > 0)
         {
             StartCoroutine(InvincibleCoroutine());
@@ -130,5 +134,20 @@ public class Health : MonoBehaviour, IDamageable
         Debug.Log($"{gameObject.name} has died!");
         // gameObject.SetActive(false);
 
+    }
+
+    public bool GetFireShield() => hasFireShield;
+    
+    public void SetFireShield(bool value, float duration)
+    {
+        hasFireShield = value;
+        if (value)
+            StartCoroutine(RemoveShieldAfter(duration));
+    }
+
+    private IEnumerator RemoveShieldAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        hasFireShield = false;
     }
 }

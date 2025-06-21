@@ -29,11 +29,14 @@ public class Inventory : MonoBehaviour
         Debug.Log($"[Inventory] PassiveItem added: {item.itemName}");
         Debug.Log($"[Inventory] PassiveItem Count: {passiveItems.Count}");
         InventoryUI.Instance?.UpdateUI();  // UI 갱신
+
+        StartCoroutine(RemoveAfterDelay(item, item.duration));
     }
 
 
     private IEnumerator RemoveAfterDelay(PassiveItem item, float delay)
     {
+        item.OnUse(GameObject.FindGameObjectWithTag("Player"));
         yield return new WaitForSeconds(delay);
         passiveItems.Remove(item);
         Debug.Log("PassiveItem removed: " + item.itemName);
@@ -53,5 +56,4 @@ public class Inventory : MonoBehaviour
         activeItems.RemoveAt(index);
         InventoryUI.Instance?.UpdateUI();
     }
-
 }
