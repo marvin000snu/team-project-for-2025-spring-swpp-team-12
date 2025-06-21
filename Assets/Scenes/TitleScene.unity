@@ -977,6 +977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92b278f629248fe459c3cd0f1807ff74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSlowImmune: 0
   OnHPChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1562,7 +1563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35cc006d149143b88511f4b7fa26d13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: GameScene
+  sceneToLoad: Stage1Scene
 --- !u!4 &2069943588
 Transform:
   m_ObjectHideFlags: 0

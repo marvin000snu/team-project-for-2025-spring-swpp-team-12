@@ -48,10 +48,29 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (SceneManager.GetActiveScene().name == "GameScene" && Input.GetKeyDown(KeyCode.Escape))
+        if (SceneManager.GetActiveScene().name.StartsWith("Stage"))
         {
-            PauseGame();
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                PauseGame();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                Inventory.Instance.UseActiveItem(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                Inventory.Instance.UseActiveItem(1);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                Inventory.Instance.UseActiveItem(3);
+            }
         }
+
     }
 
     public void DiscountLife()
@@ -89,9 +108,12 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "GameScene")
+        if (scene.name.StartsWith("Stage"))
         {
-            StartGame();
+            isPaused = true;
+            Time.timeScale = 0;
+            GameSceneUIManager uIManager = FindObjectOfType<GameSceneUIManager>();
+            uIManager.ShowReadyAndStart();
         }
     }
     public void StartGame()
@@ -137,7 +159,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         InitializeInfo();
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("Stage1Scene");
     }
 
     public void RestartFromCurrentStage()

@@ -16,6 +16,11 @@ public class GameSceneUIManager : MonoBehaviour
 
     public PlayerMovement playerMovement;
 
+    public GameObject readyPanel;
+    public GameObject startPanel;
+    public float readyDuration = 1.5f;
+    public float startDuration = 1.5f;
+
     void Start()
     {
         UpdateLifeUI();
@@ -145,10 +150,28 @@ public class GameSceneUIManager : MonoBehaviour
         Vector3 scale = staminaFill.transform.localScale;
         scale.x = ratio;
         staminaFill.transform.localScale = scale;
-        
+
         RectTransform rect = staminaFill.GetComponent<RectTransform>();
         RectTransform bRect = staminaBackground.GetComponent<RectTransform>();
         rect.anchoredPosition = new Vector2(ratio * bRect.rect.width / 2f, rect.anchoredPosition.y);
+    }
+    
+    public void ShowReadyAndStart()
+    {
+        StartCoroutine(ShowSequenceCoroutine());
+    }
+
+    private IEnumerator ShowSequenceCoroutine()
+    {
+        readyPanel.SetActive(true);
+        yield return new WaitForSecondsRealtime(readyDuration);
+        readyPanel.SetActive(false);
+
+        startPanel.SetActive(true);
+        yield return new WaitForSecondsRealtime(startDuration);
+        startPanel.SetActive(false);
+
+        GameManager.Instance.StartGame(); 
     }
 }
 
