@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ce4b40d42042378b4ab54bd033714, type: 3}
   m_Name: Stage3Passive
   m_EditorClassIdentifier: 
-  itemName: 
-  thumbnail: {fileID: 0}
-  prefab: {fileID: 0}
-  effectAsset: {fileID: 0}
-  duration: 5
+  itemName: Healing
+  thumbnail: {fileID: 21300000, guid: 8be5d06fd877b684dbe78ee94ebd93da, type: 3}
+  prefab: {fileID: 8043474221642172619, guid: 66731fddaf00859439e7bd759ac7c425, type: 3}
+  effectAsset: {fileID: 11400000, guid: 6220a90799228af4591f897f7fa55759, type: 2}
+  duration: 10

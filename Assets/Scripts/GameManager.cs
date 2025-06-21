@@ -17,11 +17,15 @@ public class GameManager : MonoBehaviour
 
     private bool isPaused = false;
     public bool isBoosted { get; set; } = false;
+    public bool isSlowed { get; set; } = false;
     public bool isBurning { get; set; } = false;
+
+    public bool isSlowImmune = false;
 
     private float playTime = 0.0f;
     private string playerName = "";
     private int life = 3;
+
 
 
 
@@ -161,7 +165,16 @@ public class GameManager : MonoBehaviour
 
     public float GetSpeedMultiplier()
     {
-        return isBoosted ? 1.5f : 1f;
+        if (isSlowImmune)
+            return isBoosted ? 1.5f : 1f; // 슬로우 무시
+
+        if (isSlowed)
+            return 0.7f;
+
+        if (isBoosted)
+            return 1.5f;
+
+        return 1f;
     }
 
 }
