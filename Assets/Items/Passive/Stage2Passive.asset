@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ce4b40d42042378b4ab54bd033714, type: 3}
   m_Name: Stage2Passive
   m_EditorClassIdentifier: 
-  itemName: 
-  thumbnail: {fileID: 0}
-  prefab: {fileID: 0}
-  effectAsset: {fileID: 0}
-  duration: 5
+  itemName: Boots
+  thumbnail: {fileID: 21300000, guid: 28e5770aae358bb4b9b9ba96ab92a840, type: 3}
+  prefab: {fileID: 8777566254235632345, guid: b14746fb87a2efa4a92e76bfc101856b, type: 3}
+  effectAsset: {fileID: 11400000, guid: 02a12c5b733539a45900e662790daca1, type: 2}
+  duration: 10
