@@ -3676,7 +3676,7 @@ MonoBehaviour:
     prefab: {fileID: 440697702}
   - type: 12
     prefab: {fileID: 1064841395}
-  mapFileName: Stage1
+  mapFileName: Stage3
 --- !u!4 &858783386
 Transform:
   m_ObjectHideFlags: 0
